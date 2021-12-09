@@ -217,6 +217,7 @@
     <ClInclude Include="Benchmark.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="scrcpy\android\input.h" />
     <ClInclude Include="scrcpy\android\keycodes.h" />
     <ClInclude Include="scrcpy\controller.h" />
@@ -263,6 +264,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="duck.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Robot2.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

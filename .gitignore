@@ -21,6 +21,8 @@ _*
 *.obj
 *.iobj
 *.ilk
+*.aps
+*.res
 
 # Debug symbol files
 *.pdb
