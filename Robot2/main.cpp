@@ -1,6 +1,10 @@
 #define CV_IGNORE_DEBUG_BUILD_GUARD
 // icon source: https://www.iconfinder.com/icons/2730368/animal_character_inkcontober_psyduck_screech_yellow_icon
 
+#ifdef _WIN32
+#include <conio.h>
+#endif
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/features2d.hpp>
@@ -40,8 +44,37 @@ namespace fs = std::filesystem;
 
 Config config;
 
-int main(int argc, char* argv[])
+void atexit_launched_without_console()
 {
+    std::cout << "Press any key to continue...\n";
+    _getch(); // from conio.h, windows only
+}
+bool IsRunningFromCommandLine(char** envp)
+{
+    bool result = false;
+    if (IsDebuggerPresent()) { result = true; }
+    else
+    {
+        const char* prompt_text = "PROMPT=";
+        size_t prompt_len = strlen(prompt_text);
+        while (*envp)
+        {
+            if (strncmp(*envp, prompt_text, prompt_len) == 0)
+            {
+                result = true;
+                break;
+            }
+            envp++;
+        }
+    }
+    return result;
+}
+
+int main(int argc, char* argv[], char** envp)
+{
+    bool runsFromCmd = IsRunningFromCommandLine(envp);
+    if (!runsFromCmd) std::atexit(atexit_launched_without_console);
+
     Window window;
     bool testOnlyConfig = true;
     if (argc > 1) {

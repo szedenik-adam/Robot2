@@ -59,6 +59,7 @@ SDL_Window* Window::_CreateWindow()
 void Window::InitSDL()
 {
     if (Window::sdl_initialized) return;
+    SDL_SetMainReady();
     scrcpyOptions::sdl_init_and_configure(true, nullptr, false);
     Window::sdl_initialized = true;
 }
