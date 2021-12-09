@@ -362,7 +362,7 @@ bool Config::LoadConfig(const std::string& filePath)
         this->LoadSetting(config, "scan_wait_random_ms", this->scanWaitRandomMs, 0);
         this->LoadSetting(config, "image_channel", this->image_channel, "Grayscale");
         this->LoadSetting(config, "detector", strDetector, "ORB_BEBLID");
-        this->LoadSetting(config, "matcher", strMatcher, "BruteForceHamming");
+        this->LoadSetting(config, "matcher", strMatcher, "BRUTEFORCE_HAMMING");
         this->LoadSetting(config, "source", this->source, "android");
         this->LoadSetting(config, "counter_limit", this->counter_limit, 100);
         this->LoadSetting(config, "estimator_history", this->estimator_history, 8);
