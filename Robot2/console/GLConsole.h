@@ -223,7 +223,7 @@ public:
     //help
     bool Help(std::vector<std::string>* vArgs);
 
-    GLFont* GetFont() const { return m_pGLFont; }
+    GLFont& GetFont() { return m_pGLFont; }
 
     void SetLogColor(float r, float g, float b) {
         m_logColor.r = r; m_logColor.g = g; m_logColor.b = b;
@@ -294,7 +294,7 @@ protected:
     int           m_nTextHeight;
     int           m_nScrollPixels;  //the number of pixels the text has been scrolled "up"
     int           m_nCommandNum;
-    GLFont* m_pGLFont;
+    GLFont m_pGLFont;
 
     // Text colors
     CVarUtils::Color& m_logColor;
@@ -381,7 +381,7 @@ protected:
  */
 inline GLConsole::~GLConsole()
 {
-    delete m_pGLFont;
+    //delete m_pGLFont;
     //HistorySave();
     //SettingsSave();
 }
@@ -409,7 +409,7 @@ inline void GLConsole::Init()
     // setup member CVars
     m_Timer.Stamp();
     m_BlinkTimer.Stamp();
-    m_pGLFont = new GLFont();
+    //m_pGLFont = new GLFont();
 
     // if the width and height ptrs aren't supplied then just extract the info
     // from GL
@@ -965,16 +965,16 @@ inline void GLConsole::_RenderText()
             blink = '_';
         }
         glColor3f(m_commandColor.r, m_commandColor.g, m_commandColor.b);
-        m_pGLFont->glPrintf(m_nConsoleLeftMargin, lineLoc - m_nScrollPixels,
+        m_pGLFont.glPrintf(m_nConsoleLeftMargin, lineLoc - m_nScrollPixels,
             "> " + m_sCurrentCommandBeg);
         int size = m_sCurrentCommandBeg.length();
         std::string em = "";
         for (int i = 0; i < size; i++) {
             em = em + " ";
         }
-        m_pGLFont->glPrintf(m_nConsoleLeftMargin, lineLoc - m_nScrollPixels,
+        m_pGLFont.glPrintf(m_nConsoleLeftMargin, lineLoc - m_nScrollPixels,
             "> " + em + blink);
-        m_pGLFont->glPrintf(m_nConsoleLeftMargin, lineLoc - m_nScrollPixels,
+        m_pGLFont.glPrintf(m_nConsoleLeftMargin, lineLoc - m_nScrollPixels,
             "> " + em + m_sCurrentCommandEnd);
 
         lineLoc += m_nTextHeight + m_nConsoleLineSpacing;
@@ -1029,7 +1029,7 @@ inline void GLConsole::_RenderText()
                     count++;
                     int start = fulltext.substr(j * chars_per_line, chars_per_line).find_first_not_of(' ');
                     if (start >= 0) {
-                        m_pGLFont->glPrintfFast(m_nConsoleLeftMargin, lineLoc - m_nScrollPixels,
+                        m_pGLFont.glPrintfFast(m_nConsoleLeftMargin, lineLoc - m_nScrollPixels,
                             fulltext.substr(j * chars_per_line + start, chars_per_line));
                     }
                 }
@@ -1124,13 +1124,13 @@ inline void GLConsole::CursorToEndOfLine()
 ////////////////////////////////////////////////////////////////////////////////
 inline void GLConsole::ScrollUpPage()
 {
-    ScrollUp((int)((m_Viewport.height * m_fOverlayPercent) - 2 * m_pGLFont->CharHeight()));
+    ScrollUp((int)((m_Viewport.height * m_fOverlayPercent) - 2 * m_pGLFont.CharHeight()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 inline void GLConsole::ScrollDownPage()
 {
-    ScrollDown((int)((m_Viewport.height * m_fOverlayPercent) - 2 * m_pGLFont->CharHeight()));
+    ScrollDown((int)((m_Viewport.height * m_fOverlayPercent) - 2 * m_pGLFont.CharHeight()));
 }
 
 
@@ -1398,7 +1398,7 @@ inline void GLConsole::_TabComplete()
                 std::string tmp = suggest_name_index_set[ii].first;
                 tmp.resize(longest, ' ');
 
-                if ((commands + tmp).length() > m_Viewport.width / m_pGLFont->CharWidth()) {
+                if ((commands + tmp).length() > m_Viewport.width / m_pGLFont.CharWidth()) {
                     cmdlines.push_back(commands);
                     commands.clear();
                 }
@@ -1412,7 +1412,7 @@ inline void GLConsole::_TabComplete()
             for (unsigned int ii = 0; ii < suggest_name_index_set.size(); ii++) {
                 std::string tmp = suggest_name_index_set[ii].first;
                 tmp.resize(longest, ' ');
-                if ((functions + tmp).length() > m_Viewport.width / m_pGLFont->CharWidth()) {
+                if ((functions + tmp).length() > m_Viewport.width / m_pGLFont.CharWidth()) {
                     funclines.push_back(functions);
                     functions.clear();
                 }

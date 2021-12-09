@@ -41,7 +41,6 @@ extern "C" void glutBitmapCharacter_(void* fontID, int character);
  ///
 class GLFont
 {
-    friend inline bool GLFontCheckInit(GLFont* pFont);
 public:
     GLFont()
     {
@@ -70,11 +69,13 @@ private:
     int            m_nNumLists;        // number of display lists
     int            m_nDisplayListBase; // base number for display lists
     bool           m_bInitDone;
+
+    bool CheckInit();
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
-inline bool GLFontCheckInit(GLFont* pFont = NULL)
+inline bool GLFont::CheckInit()
 {
     // make sure glutInit has been called
     /*if (glutGet(GLUT_ELAPSED_TIME) <= 0) {
@@ -82,41 +83,32 @@ inline bool GLFontCheckInit(GLFont* pFont = NULL)
         return false;
     }*/
 
-    static int nDisplayListBase = -1;
-    if (!pFont->m_bInitDone) {
-        assert(pFont != NULL);
-        // GLUT bitmapped fonts...  
-        pFont->m_nDisplayListBase = glGenLists(pFont->m_nNumLists);
-        if (pFont->m_nDisplayListBase == 0) {
-            //    hmm, commented out for now because on my linux box w get here sometimes
-            //    even though glut hasn't been initialized.
-            //            fprintf( stderr, "%i", pFont->m_nNumLists );
-            fprintf(stderr, "GLFontCheckInit() -- out of display lists\n");
-            return false;
-        }
-        for (int nList = pFont->m_nDisplayListBase;
-            nList < pFont->m_nDisplayListBase + pFont->m_nNumLists; nList++) {
-            glNewList(nList, GL_COMPILE);
-            glutBitmapCharacter_(GLUT_BITMAP_8_BY_13, nList + 32 - pFont->m_nDisplayListBase);
-            glEndList();
-        }
-
-        nDisplayListBase = pFont->m_nDisplayListBase;
-        pFont->m_bInitDone = true;
+    // GLUT bitmapped fonts...  
+    this->m_nDisplayListBase = glGenLists(this->m_nNumLists);
+    if (this->m_nDisplayListBase == 0) {
+        //    hmm, commented out for now because on my linux box w get here sometimes
+        //    even though glut hasn't been initialized.
+        //            fprintf( stderr, "%i", pFont->m_nNumLists );
+        fprintf(stderr, "GLFontCheckInit() -- out of display lists\n");
         return false;
     }
-    else {
-        assert(nDisplayListBase > 0);
-        pFont->m_nDisplayListBase = nDisplayListBase;
+    for (int nList = this->m_nDisplayListBase;
+        nList < this->m_nDisplayListBase + this->m_nNumLists; nList++) {
+        glNewList(nList, GL_COMPILE);
+        glutBitmapCharacter_(GLUT_BITMAP_8_BY_13, nList + 32 - this->m_nDisplayListBase);
+        glEndList();
     }
+
+    this->m_bInitDone = true;
     return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 inline GLFont::~GLFont()
 {
-    if (m_bInitDone && GLFontCheckInit(this)) {
+    if (m_bInitDone && this->CheckInit()) {
         glDeleteLists(m_nDisplayListBase, m_nDisplayListBase + m_nNumLists);
+        m_bInitDone = false;
     }
 }
 
@@ -125,7 +117,7 @@ inline GLFont::~GLFont()
 // NB: coordinates start from bottom left
 inline void GLFont::glPrintf(int x, int y, const char* fmt, ...)
 {
-    GLFontCheckInit(this);
+    this->CheckInit();
 
     char        text[MAX_TEXT_LENGTH];                  // Holds Our String
     va_list     ap;                                     // Pointer To List Of Arguments
@@ -178,7 +170,7 @@ inline void GLFont::glPrintf(int x, int y, const char* fmt, ...)
 //ASSUMES ORTHOGRAPHIC PROJECTION ALREADY SET UP...
 inline void GLFont::glPrintfFast(int x, int y, const char* fmt, ...)
 {
-    GLFontCheckInit(this);
+    this->CheckInit();
 
     char        text[MAX_TEXT_LENGTH];// Holds Our String
     va_list     ap;                   // Pointer To List Of Arguments

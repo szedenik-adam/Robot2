@@ -622,7 +622,7 @@ void Screen::render(bool update_content_rect)
                 { 
                     glColor4f(0, 0, 0, 1);
                     const std::string objName = this->worker->GetConfig().GetObjectName(oind);
-                    this->console.GetFont()->glPrintfFast(r.x, (this->frame_size.height - r.y)+2, 
+                    this->console.GetFont().glPrintfFast(r.x, (this->frame_size.height - r.y)+2, 
                         std::format("{:.1f}%% {}",r.p*100, objName));
                 }
             }
@@ -650,7 +650,7 @@ void Screen::render(bool update_content_rect)
             glColor4f(1, 1, 1, 1);
 
             // Write text.
-            this->console.GetFont()->Print(0, 10, this->worker->GetEstimator().GetString(SDL_GetTicks(), '\n'));
+            this->console.GetFont().Print(0, 10, this->worker->GetEstimator().GetString(SDL_GetTicks(), '\n'));
 
             // Restore original blending.
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
