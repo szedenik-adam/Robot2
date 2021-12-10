@@ -7,13 +7,56 @@ Robot2.exe [config_file]
 ```
 ![Config file loading procedure](doc/config_load_flow.svg)
 
+## Controls
+
+| Key | Description |
+| --- | --- |
+|**Tab**| Toggle Console.
+|**Alt + S**| Take screenshot.
+|**Alt + O**| Turn screen on/off.
+|**F2** | Turn screen off.|
+|**F3** |Turn screen on.|
+|**Alt + P** or **F1**| Power button.|
+|**Alt + H**| Home button.|
+|**Alt + M**| Menu button.|
+|**Alt + B** or <br> **Alt + Backspace**| Back button.|
+|**Alt + Up**| Volume up button.|
+|**Alt + Down**| Volume down button.|
+|**Alt + Left**| Rotate view left.|
+|**Alt + Right**| Rotate view right.|
+|**Alt + X**| Clipboard cut.|
+|**Alt + C**| Clipboard copy.|
+|**Alt + V**| Clipboard paste.|
+|**Alt + F**| Toggle fullscreen.|
+|**Alt + W**| Resize window to fit.|
+|**Alt + G**| Resize window to 1:1.|
+|**Alt + I**| Toggle FPS counter.|
+|**Alt + N**| Toggle notification panel.|
+|**Alt + R**| Rotate device.|
+
+More details here: [input_manager.cpp](Robot2/scrcpy/input_manager.cpp) in function InputManager::ProcessKey.
+
+## Console commands
+
+| Command | Description |
+| --- | --- |
+|**touch [on\|off\|0\|1\|enable\|disable]**| Enables/Disables automatic touch actions.|
+|**load <config_name>**| Loads the given config file or if it doesn't exist, then tries to load <br> <config_name>+".cfg", <config_name>+".txt", <config_name>+"config.txt".|
+
+More details here: [ConsoleCommands.cpp](Robot2/console/ConsoleCommands.cpp)
+
+
 ## Config file
 ### Structure
 ```
-// Global Options 
+// Global Options
+// written as "key = value" pairs
+// separated by new lines.
+
 objects = (
 // Template images' list.
 )
+
 actions = (
 // Actions' list.
 )
