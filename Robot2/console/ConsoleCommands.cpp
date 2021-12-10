@@ -21,7 +21,7 @@ bool ConsoleCommands::Execute(const std::string& function, const std::string& pa
         return true;
     }
     else if (function == "load") {
-        for (const std::string& ext : { ".cfg", ".txt", "config.txt" })
+        for (const std::string& ext : { "", ".cfg", ".txt", "config.txt" })
         {
             std::string fileName = params + ext;
             if (std::filesystem::exists(fileName))
