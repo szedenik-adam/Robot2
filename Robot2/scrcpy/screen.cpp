@@ -928,6 +928,7 @@ void Screen::SetWorker(Worker* worker)
 void Screen::SetEnvironment(Environment* environment)
 {
     this->environment = environment;
+    this->console.SetEnvironment(environment);
 }
 
 
