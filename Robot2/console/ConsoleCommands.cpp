@@ -31,5 +31,13 @@ bool ConsoleCommands::Execute(const std::string& function, const std::string& pa
             }
         }
     }
+    else if (function == "play") {
+        this->env->EnableWorker(true);
+        return true;
+    }
+    else if (function == "pause") {
+        this->env->EnableWorker(false);
+        return true;
+    }
     return false;
 }

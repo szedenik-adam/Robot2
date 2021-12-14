@@ -131,11 +131,7 @@ lastDetection(), /*lastDetectionFirstValidRect(config.GetObjectCount(),0),*/ las
 
 Worker::~Worker()
 {
-	if (this->thread.joinable())
-	{
-		this->isExiting = true;
-		this->thread.join();
-	}
+	this->Stop(true);
 }
 
 void Worker::UpdateResolution(int width, int height)
@@ -147,10 +143,21 @@ void Worker::UpdateResolution(int width, int height)
 
 void Worker::Start()
 {
+	this->isExiting = false;
 	if (this->thread.joinable()) { return; } // Already started.
 	this->currentState = config.GetInitialState();
 	this->lastActionMs = SDL_GetTicks();
 	this->thread = std::thread(&Worker::Run, this);
+}
+
+void Worker::Stop(bool waitForThread)
+{
+	if (this->thread.joinable())
+	{
+		this->isExiting = true;
+		if (waitForThread) { this->thread.join(); }
+		else { this->thread.detach(); }
+	}
 }
 
 void Worker::SetState(int stateInd)

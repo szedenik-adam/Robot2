@@ -36,6 +36,7 @@ public:
 	void UpdateResolution(int width, int height);
 
 	void Start(); // Starts a background thread executing the Run method.
+	void Stop(bool waitForThread);
 
 	void SetGrabImageFunct(const std::function<uint8_t*()>& f) { this->grabImageFunc = f; }
 	void SetTouchFunct(const std::function<void(int, int, bool)>& f) { this->touchFunc = f; }

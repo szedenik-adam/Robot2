@@ -24,4 +24,5 @@ public:
 
     void SetAutomatedInputsEnabled(bool enabled);
     void LoadConfig(const std::string& configFile);
+    void EnableWorker(bool enabled);
 };

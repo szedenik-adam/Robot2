@@ -34,6 +34,12 @@ void Environment::LoadConfig(const std::string& configFile)
     std::swap(this->loadedConfig, newConfig);
 }
 
+void Environment::EnableWorker(bool enabled)
+{
+    if (enabled) this->worker.Start();
+    else this->worker.Stop(false);
+}
+
 void Environment::Run()
 {
     scrcpy.Run();
