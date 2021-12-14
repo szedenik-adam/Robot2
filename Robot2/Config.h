@@ -123,6 +123,8 @@ private:
 	std::string image_channel, source;
 	ObjDetect::Detector detector;
 	cv::DescriptorMatcher::MatcherType matcher;
+
+	std::string name;
 	
 	template<typename T, typename defT>
 	void LoadSetting(libconfig::Config& setting, const std::string& name, T& value, const defT& defaultValue)
@@ -156,6 +158,7 @@ public:
 	int GetCounterLimit() const { return this->counter_limit; }
 	int GetObjectCount() const { return this->objects.size(); }
 	const std::string& GetObjectName(int ind) const { return std::get<1>(this->objects[ind]); }
+	const std::string& GetName() const { return this->name; }
 
 	static cv::Rect ApplyMarginMulToRectangle(const cv::Rect2f& marginMul, const cv::Rect& r);
 	static cv::Rect ApplyMarginMulToSize(const cv::Rect2f& marginMul, const cv::Size& s);

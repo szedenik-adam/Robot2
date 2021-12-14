@@ -124,7 +124,7 @@ void Worker::Run()
 	printf("Thread exiting\n");
 }
 
-Worker::Worker(Config& config) : config(config), estimator(config.GetCounterLimit()), frConfig(nullptr), grabImageFunc(nullptr), isExiting(false), currentState(config.GetInitialState()),
+Worker::Worker(Config& config) : config(config), estimator(config.GetName(), config.GetCounterLimit()), frConfig(nullptr), grabImageFunc(nullptr), isExiting(false), currentState(config.GetInitialState()),
 lastDetection(), /*lastDetectionFirstValidRect(config.GetObjectCount(),0),*/ lastActionMs(0), nextScanMs(0), lastDetectionMs(0)
 {
 }

@@ -27,6 +27,7 @@ public:
 // End of PrintfBuf
 
 #include <stdint.h>
+#include <string>
 
 class Estimator
 {
@@ -36,10 +37,11 @@ class Estimator
 	uint32_t eventTimesStart, eventTimesCount;
 	uint32_t counterLimit;
 	uint32_t lastBufUpdateTime; char lastUsedSeparator;
+	std::string eventName;
 	PrintfBuf<100> buf;
 
 public:
-	Estimator(uint32_t counterLimit);
+	Estimator(const std::string& eventName, uint32_t counterLimit);
 
 	void Add(uint32_t now, int inc);
 

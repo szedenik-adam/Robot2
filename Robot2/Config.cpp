@@ -435,6 +435,16 @@ bool Config::LoadConfig(const std::string& filePath)
             }
         }
     }
+    size_t lastSlashPos = filePath.find_last_of("/\\");
+    std::string name = (lastSlashPos == std::string::npos) ? filePath : filePath.substr(lastSlashPos +1);
+    if (name.ends_with("config.txt") || name.ends_with("Config.txt")) { name = name.substr(0, name.length() - strlen("config.txt")); }
+    else {
+        size_t lastDotPos = filePath.find_last_of('.');
+        if (lastDotPos != std::string::npos) name = name.substr(0, lastDotPos);
+    }
+    std::for_each(name.begin(), name.end(), [](char& c) { c = ::tolower(c); });
+    this->name = name;
+
     return testOnlyConfig;
 }
 

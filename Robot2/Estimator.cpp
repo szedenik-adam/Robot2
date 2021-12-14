@@ -4,7 +4,7 @@
 #include <iostream>
 #include "termcolor.hpp"
 
-Estimator::Estimator(uint32_t counterLimit): lastEventTime(0), eventCount(0), eventTimes{ 0 }, eventTimesStart(0), eventTimesCount(0), counterLimit(counterLimit), lastBufUpdateTime(0), lastUsedSeparator('\0')
+Estimator::Estimator(const std::string& eventName, uint32_t counterLimit): lastEventTime(0), eventCount(0), eventTimes{ 0 }, eventTimesStart(0), eventTimesCount(0), counterLimit(counterLimit), lastBufUpdateTime(0), lastUsedSeparator('\0'), eventName(eventName)
 {
 }
 
@@ -40,13 +40,13 @@ const char* Estimator::GetString(uint32_t now, char separator)
 		uint32_t nowSec = now / 1000;
 		uint32_t nowMin = nowSec / 60; nowSec -= nowMin * 60;
 		uint32_t nowHour = nowMin / 60; nowMin -= nowHour * 60;
-		if (nowHour) buf.write("Done %u events in %02u:%02u:%02u.", this->eventCount, nowHour, nowMin, nowSec);
-		else buf.write("Done %u events in %02u:%02u.", this->eventCount, nowMin, nowSec);
+		if (nowHour) buf.write("Done %u %ss in %02u:%02u:%02u.", this->eventCount, this->eventName.c_str(), nowHour, nowMin, nowSec);
+		else buf.write("Done %u %ss in %02u:%02u.", this->eventCount, this->eventName.c_str(), nowMin, nowSec);
 
 		uint32_t lasteventDelta = now - (this->eventTimesCount ? this->eventTimes[(this->eventTimesStart + this->eventTimesCount - 1) % eventTimesLength] : 0);
 		uint32_t deltaSec = lasteventDelta / 1000;
 		uint32_t deltaMin = deltaSec / 60; deltaSec -= deltaMin * 60;
-		buf.write("%cTime since last event: %u:%02u.", separator, deltaMin, deltaSec);
+		buf.write("%cTime since last %s: %u:%02u.", separator, this->eventName.c_str(), deltaMin, deltaSec);
 
 		if (this->eventTimesCount) {
 			uint32_t avgeventTime;
