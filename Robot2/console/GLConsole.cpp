@@ -354,37 +354,25 @@ bool GLConsole::_ProcessCurrentCommand(bool bExecute)
                 bSuccess = false;
             }
         }
-        //check if this is a function
-        else if ((eq_pos = m_sCurrentCommand.find(" ")) != -1) {
+        else if (m_sCurrentCommand.empty()) // just pressed enter
+        { 
+            EnterLogLine(" ", LINEPROP_LOG);
+        }
+        // Try to execute command.
+        else
+        {
             std::string function, params;
             function = m_sCurrentCommand.substr(0, eq_pos);
             params = m_sCurrentCommand.substr(eq_pos+1);
 
             bSuccess = commands.Execute(function, params);
-            EnterLogLine(m_sCurrentCommand.c_str(), LINEPROP_FUNCTION);
-
-            /*//check if this is a valid function name
-            if ((node = trie.Find(function)) && _IsConsoleFunc(node)) {
-                bSuccess &= CVarUtils::ExecuteFunction(m_sCurrentCommand, (CVarUtils::CVar<ConsoleFunc>*)node->m_pNodeData, sRes, bExecute);
+            if (bSuccess) {
                 EnterLogLine(m_sCurrentCommand.c_str(), LINEPROP_FUNCTION);
             }
             else {
-                if (bExecute) {
-                    std::string out = function + ": function not found";
-                    EnterLogLine(out.c_str(), LINEPROP_ERROR);
-                }
-                bSuccess = false;
-            }*/
-        }
-        else if (!m_sCurrentCommand.empty()) {
-            if (bExecute) {
-                std::string out = m_sCurrentCommand + ": command not found";
+                std::string out = function + ": command not found";
                 EnterLogLine(out.c_str(), LINEPROP_ERROR);
             }
-            bSuccess = false;
-        }
-        else { // just pressed enter
-            EnterLogLine(" ", LINEPROP_LOG);
         }
     }
 
