@@ -19,7 +19,7 @@ class Worker
 	ThreadSafeBuffer<WorkerInfo> workerInfos;
 	std::function<uint8_t*()> grabImageFunc;
 	std::function<void(int, int, bool)> touchFunc;
-	bool isExiting;
+	bool isExiting, isOnceStopped;
 	std::thread thread;
 	const Config::State* currentState;
 	std::vector<std::vector<RectProb>> lastDetection;
@@ -36,7 +36,7 @@ public:
 	void UpdateResolution(int width, int height);
 
 	void Start(); // Starts a background thread executing the Run method.
-	void Stop(bool waitForThread);
+	void Stop(bool waitForThread, bool once=false);
 
 	void SetGrabImageFunct(const std::function<uint8_t*()>& f) { this->grabImageFunc = f; }
 	void SetTouchFunct(const std::function<void(int, int, bool)>& f) { this->touchFunc = f; }

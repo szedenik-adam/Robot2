@@ -532,7 +532,8 @@ void Config::SetStateTask::Execute(Worker& worker)
 void Config::CounterIncrementTask::Execute(Worker& worker)
 {
     if (worker.GetState() == this->curState) {
-        worker.GetEstimator().Add(worker.GetNow(), this->increment);
+        bool isLimitReached = worker.GetEstimator().Add(worker.GetNow(), this->increment);
+        if (isLimitReached) { worker.Stop(false, true); }
         std::cout << std::format("Counter incremented (+{})\n", this->increment);
         worker.GetEstimator().Display(worker.GetNow());
     }

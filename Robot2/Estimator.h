@@ -43,7 +43,7 @@ class Estimator
 public:
 	Estimator(const std::string& eventName, uint32_t counterLimit);
 
-	void Add(uint32_t now, int inc);
+	bool Add(uint32_t now, int inc);
 
 	void SetCounterLimit(uint32_t counterLimit) { this->counterLimit = counterLimit; }
 

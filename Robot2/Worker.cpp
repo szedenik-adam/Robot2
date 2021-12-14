@@ -124,7 +124,7 @@ void Worker::Run()
 	printf("Thread exiting\n");
 }
 
-Worker::Worker(Config& config) : config(config), estimator(config.GetName(), config.GetCounterLimit()), frConfig(nullptr), grabImageFunc(nullptr), isExiting(false), currentState(config.GetInitialState()),
+Worker::Worker(Config& config) : config(config), estimator(config.GetName(), config.GetCounterLimit()), frConfig(nullptr), grabImageFunc(nullptr), isExiting(false), isOnceStopped(false), currentState(config.GetInitialState()),
 lastDetection(), /*lastDetectionFirstValidRect(config.GetObjectCount(),0),*/ lastActionMs(0), nextScanMs(0), lastDetectionMs(0)
 {
 }
@@ -150,13 +150,17 @@ void Worker::Start()
 	this->thread = std::thread(&Worker::Run, this);
 }
 
-void Worker::Stop(bool waitForThread)
+void Worker::Stop(bool waitForThread, bool once)
 {
+	if (once && this->isOnceStopped) { return; }
+
 	if (this->thread.joinable())
 	{
 		this->isExiting = true;
 		if (waitForThread) { this->thread.join(); }
 		else { this->thread.detach(); }
+
+		if (once) { this->isOnceStopped = true; }
 	}
 }
 

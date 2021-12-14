@@ -8,7 +8,7 @@ Estimator::Estimator(const std::string& eventName, uint32_t counterLimit): lastE
 {
 }
 
-void Estimator::Add(uint32_t now, int inc)
+bool Estimator::Add(uint32_t now, int inc)
 {
 	if (this->eventTimesCount < eventTimesLength) {
 		this->eventTimes[(this->eventTimesStart + this->eventTimesCount++) % eventTimesLength] = now;
@@ -19,6 +19,8 @@ void Estimator::Add(uint32_t now, int inc)
 	}
 
 	this->eventCount += inc;
+
+	return this->eventCount >= counterLimit;
 }
 
 #ifdef min
