@@ -361,9 +361,10 @@ bool GLConsole::_ProcessCurrentCommand(bool bExecute)
         // Try to execute command.
         else
         {
+            eq_pos = m_sCurrentCommand.find(" ");
             std::string function, params;
             function = m_sCurrentCommand.substr(0, eq_pos);
-            params = m_sCurrentCommand.substr(eq_pos+1);
+            params = eq_pos>-1 ? m_sCurrentCommand.substr(eq_pos+1) : "";
 
             bSuccess = commands.Execute(function, params);
             if (bSuccess) {
