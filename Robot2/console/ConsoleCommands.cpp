@@ -39,5 +39,10 @@ bool ConsoleCommands::Execute(const std::string& function, const std::string& pa
         this->env->EnableWorker(false);
         return true;
     }
+    else if (function == "limit") {
+        uint32_t limit = std::strtoul(params.c_str(), nullptr, 10);
+        this->env->UpdateCounterLimit(limit);
+        return true;
+    }
     return false;
 }

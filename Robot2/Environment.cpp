@@ -40,6 +40,11 @@ void Environment::EnableWorker(bool enabled)
     else this->worker.Stop(false);
 }
 
+void Environment::UpdateCounterLimit(uint32_t limit)
+{
+    this->worker.GetEstimator().SetCounterLimit(limit);
+}
+
 void Environment::Run()
 {
     scrcpy.Run();
