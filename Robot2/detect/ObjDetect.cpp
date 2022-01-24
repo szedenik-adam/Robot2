@@ -228,6 +228,10 @@ std::tuple<cv::Mat, cv::Mat> ObjDetect::GetTransformationMatrix(const std::tuple
 bool ObjDetect::ValidateTransformationMatrix(const cv::Mat& h, cv::Size srcSize)
 {
     BenchmarkT<"ValidateTransformationMatrix"> _b;
+    if (h.cols < 3 || h.rows < 2) {
+        printf("Transformation Matrix is incomplete.\n");
+        return false;
+    }
     float translateX = h.at<double>(0, 2);
     float translateY = h.at<double>(1, 2);
     float xx_scale = h.at<double>(0, 0);
