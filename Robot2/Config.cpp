@@ -489,7 +489,12 @@ bool Config::ObjectRequirement::IsSatisfied(Worker* worker) const //const std::v
     bool found = false;
     cv::Rect scanRegion = this->CalculateScanRect(worker->GetFixResConfig().GetSize());
 
-    std::vector<RectProb>& objDetection = worker->GetLastDetection()[this->objIndex];
+    std::vector<std::vector<RectProb>>& lastDetection = worker->GetLastDetection();
+    if (this->objIndex >= lastDetection.size()) {
+        printf("ObjectRequirement Error: lastDetection is smaller than object index!\n");
+        return false;
+    }
+    std::vector<RectProb>& objDetection = lastDetection[this->objIndex];
     for (RectProb& rect : objDetection)
     {
         if (rect.p >= this->minDetectQuality && (rect & scanRegion).area())
