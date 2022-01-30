@@ -1,8 +1,18 @@
-#define CV_IGNORE_DEBUG_BUILD_GUARD
+// Define CV_IGNORE_DEBUG_BUILD_GUARD when using release OpenCV with debug build.
 // icon source: https://www.iconfinder.com/icons/2730368/animal_character_inkcontober_psyduck_screech_yellow_icon
 
+/*
+vcpkg install opencv[ffmpeg,contrib,nonfree,openmp,cuda]:x64-windows
+*/
+
 #ifdef _WIN32
+
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include <conio.h>
+
 #endif
 
 #include <opencv2/core.hpp>
@@ -15,6 +25,18 @@
 #include <filesystem>
 #include <opencv2/xfeatures2d.hpp>
 
+#ifdef _DEBUG
+#pragma comment(lib, "opencv_cored.lib")
+#pragma comment(lib, "opencv_features2dd.lib")
+#pragma comment(lib, "opencv_xfeatures2dd.lib")
+#pragma comment(lib, "opencv_imgprocd.lib")
+#pragma comment(lib, "opencv_imgcodecsd.lib")
+#pragma comment(lib, "opencv_highguid.lib")
+#pragma comment(lib, "opencv_calib3dd.lib")
+#pragma comment(lib, "opencv_flannd.lib")
+//#pragma comment(lib, "opencv_world.lib")
+#pragma comment(lib, "libconfig++.lib")
+#else
 #pragma comment(lib, "opencv_core.lib")
 #pragma comment(lib, "opencv_features2d.lib")
 #pragma comment(lib, "opencv_xfeatures2d.lib")
@@ -25,6 +47,7 @@
 #pragma comment(lib, "opencv_flann.lib")
 //#pragma comment(lib, "opencv_world.lib")
 #pragma comment(lib, "libconfig++.lib")
+#endif
 
 #include "Benchmark.h"
 #include "detect/ObjDetect.h"
@@ -72,6 +95,12 @@ bool IsRunningFromCommandLine(char** envp)
 
 int main(int argc, char* argv[], char** envp)
 {
+#ifdef _WIN32
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // Show memory leak on program exit.
+    //_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
+#endif
     bool runsFromCmd = IsRunningFromCommandLine(envp);
     if (!runsFromCmd) std::atexit(atexit_launched_without_console);
 

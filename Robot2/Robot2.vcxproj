@@ -115,16 +115,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_D_EBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_CRTDBG_MAP_ALLOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>H:\Visual Studio\Shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>H:\Visual Studio\Shared\ffmpeg_h264dec_only;H:\Visual Studio\Shared\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>H:\Visual Studio\Shared\ffmpeg_h264dec_only;H:\Visual Studio\Shared\lib_debug;H:\Visual Studio\Shared\lib_debug;H:\Visual Studio\Shared\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -169,6 +170,7 @@
     <ClCompile Include="detect\Tests.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="scrcpy\command.cpp" />
+    <ClCompile Include="scrcpy\compat.cpp" />
     <ClCompile Include="scrcpy\controller.cpp" />
     <ClCompile Include="scrcpy\control_msg.cpp" />
     <ClCompile Include="scrcpy\decoder.cpp" />
