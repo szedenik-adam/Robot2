@@ -1,5 +1,6 @@
 #include "server.h"
 #include "scrcpy.h"
+#include "compat.h"
 #include <cassert>
 #include <cinttypes>
 #include "util/lock.h"
@@ -244,49 +245,90 @@ log_level_to_server_string(enum sc_log_level level) {
 
 process_t Server::ExecuteServer(const struct server_params* params)
 {
-    char max_size_string[6];
-    char bit_rate_string[11];
-    char max_fps_string[6];
-    char lock_video_orientation_string[5];
-    char display_id_string[6];
-    sprintf(max_size_string, "%" PRIu16, params->max_size);
-    sprintf(bit_rate_string, "%" PRIu32, params->bit_rate);
-    sprintf(max_fps_string, "%" PRIu16, params->max_fps);
-    sprintf(lock_video_orientation_string, "%" PRIi8, params->lock_video_orientation);
-    sprintf(display_id_string, "%" PRIu16, params->display_id);
-    const char* const cmd[] = {
-        "shell",
-        "CLASSPATH=" DEVICE_SERVER_PATH,
-        "app_process",
+    process_t pid = 0;//SC_PROCESS_NONE;
+
+    const char* cmd[128];
+    unsigned count = 0;
+    cmd[count++] = "shell";
+    cmd[count++] = "CLASSPATH=" DEVICE_SERVER_PATH;
+    cmd[count++] = "app_process";
+
 #ifdef SERVER_DEBUGGER
 # define SERVER_DEBUGGER_PORT "5005"
+    cmd[count++] =
 # ifdef SERVER_DEBUGGER_METHOD_NEW
         /* Android 9 and above */
-        "-XjdwpProvider:internal -XjdwpOptions:transport=dt_socket,suspend=y,server=y,address="
+        "-XjdwpProvider:internal -XjdwpOptions:transport=dt_socket,suspend=y,"
+        "server=y,address="
 # else
         /* Android 8 and below */
         "-agentlib:jdwp=transport=dt_socket,suspend=y,server=y,address="
 # endif
-            SERVER_DEBUGGER_PORT,
+        SERVER_DEBUGGER_PORT;
 #endif
-        "/", // unused
-        "com.genymobile.scrcpy.Server",
-        SCRCPY_VERSION,
-        log_level_to_server_string(params->log_level),
-        max_size_string,
-        bit_rate_string,
-        max_fps_string,
-        lock_video_orientation_string,
-        this->tunnel_forward ? "true" : "false",
-        params->crop ? params->crop : "-",
-        "true", // always send frame meta (packet boundaries + timestamp)
-        params->control ? "true" : "false",
-        display_id_string,
-        params->show_touches ? "true" : "false",
-        params->stay_awake ? "true" : "false",
-        params->codec_options ? params->codec_options : "-",
-        params->encoder_name ? params->encoder_name : "-",
-    };
+    cmd[count++] = "/"; // unused
+    cmd[count++] = "com.genymobile.scrcpy.Server";
+    cmd[count++] = SCRCPY_VERSION;
+
+    unsigned dyn_idx = count; // from there, the strings are allocated
+#define ADD_PARAM(fmt, ...) { \
+        char *p = (char *) &cmd[count]; \
+        if (asprintf(&p, fmt, ## __VA_ARGS__) == -1) { \
+            goto end; \
+        } \
+        cmd[count++] = p; \
+    }
+#define STRBOOL(v) (v ? "true" : "false")
+
+    ADD_PARAM("log_level=%s", log_level_to_server_string(params->log_level));
+    ADD_PARAM("bit_rate=%" PRIu32, params->bit_rate);
+
+    if (params->max_size) {
+        ADD_PARAM("max_size=%" PRIu16, params->max_size);
+    }
+    if (params->max_fps) {
+        ADD_PARAM("max_fps=%" PRIu16, params->max_fps);
+    }
+    if (params->lock_video_orientation != DEFAULT_LOCK_VIDEO_ORIENTATION) {
+        ADD_PARAM("lock_video_orientation=%" PRIi8,
+            params->lock_video_orientation);
+    }
+    if (this->tunnel_forward) {
+        ADD_PARAM("tunnel_forward=%s", STRBOOL(this->tunnel_forward));
+    }
+    if (params->crop) {
+        ADD_PARAM("crop=%s", params->crop);
+    }
+    if (!params->control) {
+        // By default, control is true
+        ADD_PARAM("control=%s", STRBOOL(params->control));
+    }
+    if (params->display_id) {
+        ADD_PARAM("display_id=%" PRIu32, params->display_id);
+    }
+    if (params->show_touches) {
+        ADD_PARAM("show_touches=%s", STRBOOL(params->show_touches));
+    }
+    if (params->stay_awake) {
+        ADD_PARAM("stay_awake=%s", STRBOOL(params->stay_awake));
+    }
+    if (params->codec_options) {
+        ADD_PARAM("codec_options=%s", params->codec_options);
+    }
+    if (params->encoder_name) {
+        ADD_PARAM("encoder_name=%s", params->encoder_name);
+    }
+    /*if (params->power_off_on_close) {
+        ADD_PARAM("power_off_on_close=%s", STRBOOL(params->power_off_on_close));
+    }
+    if (!params->clipboard_autosync) {
+        // By defaut, clipboard_autosync is true
+        ADD_PARAM("clipboard_autosync=%s", STRBOOL(params->clipboard_autosync));
+    }*/
+
+#undef ADD_PARAM
+#undef STRBOOL
+
 #ifdef SERVER_DEBUGGER
     LOGI("Server debugger waiting for a client on device port "
         SERVER_DEBUGGER_PORT "...");
@@ -298,7 +340,15 @@ process_t Server::ExecuteServer(const struct server_params* params)
     //     Port: 5005
     // Then click on "Debug"
 #endif
-    return adb_execute(this->serial, cmd, sizeof(cmd) / sizeof(cmd[0]));
+    // Inherit both stdout and stderr (all server logs are printed to stdout)
+    pid = adb_execute(this->serial, cmd, count);
+
+end:
+    for (unsigned i = dyn_idx; i < count; ++i) {
+        free((char*)cmd[i]);
+    }
+
+    return pid;
 }
 
 static socket_t

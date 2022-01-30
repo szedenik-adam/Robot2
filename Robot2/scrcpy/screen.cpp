@@ -525,6 +525,7 @@ bool Screen::update_frame(VideoBuffer& vb)
     mutex_unlock(vb.mutex);
 
     this->render(false);
+
     return true;
 }
 
@@ -893,6 +894,8 @@ void Screen::convert_frame(const AVFrame* frame)
     uint8_t* rgb32[1] = { this->pixels[0] };
     int rgb32_stride[1] = { 4 * this->frame_size.width };
     sws_scale(this->swsCtx, frame->data, frame->linesize, 0, this->frame_size.height, rgb32, rgb32_stride);
+
+    av_frame_unref((AVFrame*)frame);//test
 }
 
 /*std::function<std::tuple<uint8_t*, std::unique_lock<std::mutex>>()> Screen::GetGrabImageFunc()

@@ -17,7 +17,7 @@
 // type: 1 byte; paste flag: 1 byte; length: 4 bytes
 #define CONTROL_MSG_CLIPBOARD_TEXT_MAX_LENGTH (CONTROL_MSG_MAX_SIZE - 6)
 
-#define POINTER_ID_MOUSE UINT64_MAX;
+#define POINTER_ID_MOUSE UINT64_MAX
 //#define POINTER_ID_VIRTUAL_FINGER UINT64_MAX-1
 #define POINTER_ID_VIRTUAL_FINGER 0
 
@@ -28,18 +28,25 @@ enum control_msg_type {
     CONTROL_MSG_TYPE_INJECT_SCROLL_EVENT,
     CONTROL_MSG_TYPE_BACK_OR_SCREEN_ON,
     CONTROL_MSG_TYPE_EXPAND_NOTIFICATION_PANEL,
-    CONTROL_MSG_TYPE_COLLAPSE_NOTIFICATION_PANEL,
+    CONTROL_MSG_TYPE_EXPAND_SETTINGS_PANEL,
+    CONTROL_MSG_TYPE_COLLAPSE_PANELS,
     CONTROL_MSG_TYPE_GET_CLIPBOARD,
     CONTROL_MSG_TYPE_SET_CLIPBOARD,
     CONTROL_MSG_TYPE_SET_SCREEN_POWER_MODE,
     CONTROL_MSG_TYPE_ROTATE_DEVICE,
-    CONTROL_MSG_TYPE_NONE,
+    CONTROL_MSG_TYPE_NONE
 };
 
 enum screen_power_mode {
     // see <https://android.googlesource.com/platform/frameworks/base.git/+/pie-release-2/core/java/android/view/SurfaceControl.java#305>
     SCREEN_POWER_MODE_OFF = 0,
     SCREEN_POWER_MODE_NORMAL = 2,
+};
+
+enum get_clipboard_copy_key {
+    GET_CLIPBOARD_COPY_KEY_NONE,
+    GET_CLIPBOARD_COPY_KEY_COPY,
+    GET_CLIPBOARD_COPY_KEY_CUT,
 };
 
 class ControlMsg {
@@ -53,7 +60,7 @@ public:
             enum android_metastate metastate;
         } inject_keycode;
         struct {
-            char *text; // owned, to be freed by SDL_free()
+            char* text; // owned, to be freed by free()
         } inject_text;
         struct {
             enum android_motionevent_action action;
@@ -68,7 +75,15 @@ public:
             int32_t vscroll;
         } inject_scroll_event;
         struct {
-            char *text; // owned, to be freed by SDL_free()
+            enum android_keyevent_action action; // action for the BACK key
+            // screen may only be turned on on ACTION_DOWN
+        } back_or_screen_on;
+        struct {
+            enum get_clipboard_copy_key copy_key;
+        } get_clipboard;
+        struct {
+            uint64_t sequence;
+            char* text; // owned, to be freed by free()
             bool paste;
         } set_clipboard;
         struct {
@@ -78,6 +93,8 @@ public:
     // buf size must be at least CONTROL_MSG_MAX_SIZE
     // return the number of bytes written
     size_t Serialize(unsigned char* buf) const;
+
+    void Log() const;
 
     ~ControlMsg();
 

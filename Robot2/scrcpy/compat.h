@@ -3,6 +3,7 @@
 
 #include <libavformat/version.h>
 #include <SDL2/SDL_version.h>
+#include <cassert>
 
 // In ffmpeg/doc/APIchanges:
 // 2016-04-11 - 6f69f7a / 9200514 - lavf 57.33.100 / 57.5.0 - avformat.h
@@ -46,6 +47,24 @@
 #if SDL_VERSION_ATLEAST(2, 0, 8)
 // <https://hg.libsdl.org/SDL/rev/dfde5d3f9781>
 # define SCRCPY_SDL_HAS_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR
+#endif
+
+#ifndef __WIN32
+# define PRIu64_ PRIu64
+#else
+# define PRIu64_ "I64u"  // Windows...
+#endif
+
+#ifndef HAVE_STRDUP
+char* strdup(const char* s);
+#endif
+
+#ifndef HAVE_ASPRINTF
+int asprintf(char** strp, const char* fmt, ...);
+#endif
+
+#ifndef HAVE_VASPRINTF
+int vasprintf(char** strp, const char* fmt, va_list ap);
 #endif
 
 #endif

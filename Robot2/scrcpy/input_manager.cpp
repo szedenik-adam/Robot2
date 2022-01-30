@@ -172,7 +172,7 @@ expand_notification_panel(Controller *controller) {
 static void
 collapse_notification_panel(Controller *controller) {
     ControlMsg msg;
-    msg.type = CONTROL_MSG_TYPE_COLLAPSE_NOTIFICATION_PANEL;
+    msg.type = CONTROL_MSG_TYPE_EXPAND_SETTINGS_PANEL;
 
     if (!controller->PushMsg(std::move(msg))) {
         LOGW("Could not request 'collapse notification panel'");

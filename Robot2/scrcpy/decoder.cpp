@@ -17,7 +17,7 @@ bool Decoder::Open(const AVCodec* codec)
         return false;
     }
 
-    if (avcodec_open2(this->codec_ctx, codec, NULL) < 0) {
+    if (avcodec_open2(this->codec_ctx, codec, 0) < 0) {
         LOGE("Could not open codec");
         avcodec_free_context(&this->codec_ctx);
         return false;
@@ -42,6 +42,7 @@ bool Decoder::Push(const AVPacket* packet)
         LOGE("Could not send video packet: %d", ret);
         return false;
     }
+
     ret = avcodec_receive_frame(this->codec_ctx, this->video_buffer.decoding_frame);
     if (!ret) {
         // a frame was received
