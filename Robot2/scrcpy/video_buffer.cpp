@@ -66,9 +66,7 @@ VideoBuffer::~VideoBuffer()
 }
 
 void VideoBuffer::swap_frames() {
-    AVFrame* tmp = this->decoding_frame;
-    this->decoding_frame = this->rendering_frame;
-    this->rendering_frame = tmp;
+    std::swap(this->decoding_frame, this->rendering_frame);
 }
 
 void VideoBuffer::offer_decoded_frame(bool* previous_frame_skipped)
