@@ -118,7 +118,7 @@ private:
 	std::map<std::string, int> objNameToIndex;
 	std::map<std::string, int> stateNameToIndex;
 
-	int scanWaitMs, scanWaitRandomMs, counter_limit, estimator_history, initialState;
+	int scanWaitMs, scanWaitRandomMs, counter_limit, estimator_history, initialState, threadCount;
 	float minDetectionQuality;
 	std::string image_channel, source;
 	ObjDetect::Detector detector;
@@ -153,6 +153,7 @@ public:
 	const std::vector<Action>& GetActions() const { return actions; }
 	const std::vector<std::pair<std::string, std::string>>& GetObjects() const { return objects; }
 	ObjDetect CreateDetector();
+	int GetThreadCount() const { return this->threadCount; }
 	const State* GetInitialState() const { return &this->states[this->initialState]; }
 	int GetScanWaitMs() const;
 	int GetCounterLimit() const { return this->counter_limit; }

@@ -41,6 +41,8 @@ FixedResolutionConfig::FixedResolutionConfig(const Config& config, int width, in
 void Worker::Run()
 {
 	using namespace std::chrono_literals;
+	
+	cv::setNumThreads(config.GetThreadCount());
 
 	ObjDetect od = config.CreateDetector();
 	try {

@@ -367,6 +367,7 @@ bool Config::LoadConfig(const std::string& filePath)
         this->LoadSetting(config, "counter_limit", this->counter_limit, 100);
         this->LoadSetting(config, "estimator_history", this->estimator_history, 8);
         this->LoadSetting(config, "min_detect_quality", this->minDetectionQuality, 0.1f);
+        this->LoadSetting(config, "thread_count", this->threadCount, -1);
 
         std::optional<ObjDetect::Detector> detector = magic_enum::enum_cast<ObjDetect::Detector>(strDetector);
         if (detector.has_value()) { this->detector = detector.value(); }
